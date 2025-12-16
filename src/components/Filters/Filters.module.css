@@ -1,0 +1,74 @@
+.box {
+    border-radius: 16px;
+    border: 1px solid #e4e7ec;
+    padding: 16px 14px;
+    background-color: #ffffff;
+}
+
+.title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: #101828;
+}
+
+.section {
+    margin-bottom: 16px;
+}
+
+.label {
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 6px;
+    color: #4b5563;
+}
+
+.input {
+    width: 100%;
+    border-radius: 10px;
+    border: 1px solid #d1d5db;
+    padding: 8px 10px;
+    font-size: 14px;
+}
+
+.input:focus {
+    outline: none;
+    border-color: #eb5757;
+    box-shadow: 0 0 0 1px #fecaca;
+}
+
+.radioGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.radioLabel {
+    font-size: 13px;
+    color: #4b5563;
+}
+
+.checkboxGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.checkboxLabel {
+    font-size: 13px;
+    color: #4b5563;
+}
+
+.reset {
+    margin-top: 4px;
+    padding: 6px 14px;
+    font-size: 13px;
+    border-radius: 999px;
+    border: none;
+    background-color: #f3f4f6;
+    cursor: pointer;
+}
+
+.reset:hover {
+    background-color: #e5e7eb;
+}
