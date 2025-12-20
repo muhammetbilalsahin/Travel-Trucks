@@ -1,88 +1,83 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import styles from "./CatalogPage.module.css";
-import { fetchCampers } from "../../redux/campers/campersThunks";
+import { Helmet } from "react-helmet-async";
+
+import FilterBar from "@/components/FilterBar/FilterBar";
+import ItemList from "@/components/ItemList/ItemList";
+import Loader from "@/components/Loader/Loader";
 import {
-  resetCampers,
-  setPage,
-} from "../../redux/campers/campersSlice";
-import CamperCard from "../../components/CamperCard/CamperCard";
-import Loader from "../../components/Loader/Loader";
-import Filters from "../../components/Filters/Filters";
+  AsideContainer,
+  CatalogContainer,
+  CatalogMainContent,
+  CatalogSection,
+  LoadMoreBtn,
+  NoItemsFound,
+} from "./CatalogPage.styled";
+
+import { clearItems, setPage } from "@/redux/campers/slice";
+import { fetchCampers } from "@/redux/campers/operations";
+import {
+  selectCampers,
+  selectCurrentPage,
+  selectFilterCampers,
+  selectIsLoading,
+  selectTotalCampers,
+} from "@/redux/campers/selectors";
 
 export default function CatalogPage() {
   const dispatch = useDispatch();
+  const filters = useSelector(selectFilterCampers);
+  const campers = useSelector(selectCampers);
+  const isLoading = useSelector(selectIsLoading);
+  const totalCampers = useSelector(selectTotalCampers);
+  const currentPage = useSelector(selectCurrentPage);
 
-  const { items, page, limit, isLoading, error, hasMore } = useSelector(
-    (state) => state.campers
-  );
-  const filters = useSelector((state) => state.filters);
-
-  // Filtreler veya sayfa ilk açıldığında
   useEffect(() => {
-    dispatch(resetCampers());
     dispatch(setPage(1));
-    dispatch(
-      fetchCampers({
-        page: 1,
-        limit,
-        filters,
-        append: false,
-      })
-    );
-  }, [dispatch, limit, filters]);
+    dispatch(clearItems());
+    dispatch(fetchCampers({ page: 1, filters }));
+  }, [dispatch, filters]);
+
+  const hasMoreItems = campers.length < totalCampers;
 
   const handleLoadMore = () => {
-    const nextPage = page + 1;
+    const nextPage = currentPage + 1;
     dispatch(setPage(nextPage));
-    dispatch(
-      fetchCampers({
-        page: nextPage,
-        limit,
-        filters,
-        append: true,
-      })
-    );
+    dispatch(fetchCampers({ page: nextPage, filters }));
   };
 
   return (
-    <section className={styles.wrapper}>
-      <h1 className={styles.title}>Campers catalog</h1>
-
-      <div className={styles.layout}>
-        <div className={styles.filters}>
-          <Filters />
-        </div>
-
-        <div className={styles.content}>
-          {error && <p className={styles.error}>Error: {error}</p>}
-
-          <div className={styles.list}>
-            {items.map((camper) => (
-              <CamperCard key={camper.id} camper={camper} />
-            ))}
+    <CatalogMainContent>
+      <Helmet>
+        <title>Travel Trucks Catalog Page</title>
+        <meta
+          name="description"
+          content="Look through catalog of the travel trucks"
+        />
+      </Helmet>
+      <AsideContainer>
+        <FilterBar />
+      </AsideContainer>
+      <CatalogSection>
+        <CatalogContainer>
+          <div>
+            {isLoading ? (
+              <Loader />
+            ) : campers.length > 0 ? (
+              <ItemList campers={campers} />
+            ) : (
+              <NoItemsFound>No items found based on your filters</NoItemsFound>
+            )}
+            {hasMoreItems && !isLoading && campers.length > 0 && (
+              <LoadMoreBtn
+                text="Load More"
+                type="button"
+                onClick={handleLoadMore}
+              />
+            )}
           </div>
-
-          {isLoading && <Loader />}
-
-          {!isLoading && hasMore && items.length > 0 && (
-            <button
-              className={styles.loadMore}
-              onClick={handleLoadMore}
-            >
-              Load more
-            </button>
-          )}
-
-          {!isLoading && !hasMore && items.length > 0 && (
-            <p className={styles.end}>No more campers</p>
-          )}
-
-          {!isLoading && items.length === 0 && !error && (
-            <p className={styles.empty}>No campers found.</p>
-          )}
-        </div>
-      </div>
-    </section>
+        </CatalogContainer>
+      </CatalogSection>
+    </CatalogMainContent>
   );
 }
