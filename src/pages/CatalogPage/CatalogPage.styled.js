@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import DefaultBtn from "@/components/DefaultBtn/DefaultBtn";
+import { DefaultBtn } from "../../components/DefaultBtn/DefaultBtn.styled";
 
 export const CatalogMainContent = styled.main`
   width: 100%;
