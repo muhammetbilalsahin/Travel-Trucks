@@ -1,17 +1,40 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
+import React, { useState } from "react";
 import { BrowserRouter } from "react-router-dom";
+import ReactDOM from "react-dom/client";
+import { ThemeProvider } from "styled-components";
 import { Provider } from "react-redux";
-import App from "./App.jsx";
-import { store } from "./redux/store.js";
-import "./index.css"; // Vite'nin default dosyası, içinde genel reset/stil olabilir
+import { HelmetProvider } from "react-helmet-async";
 
-ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
-    <Provider store={store}>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
-    </Provider>
-  </React.StrictMode>
-);
+import App from "./App";
+import { DatePickerStyles } from "@components/InputDatePicker/InputDatePicker.styled";
+
+import { GlobalStyle } from "@styles/Globalstyle";
+import { darkTheme, lightTheme } from "./Themes";
+import { store } from "./redux/store";
+
+const Index = () => {
+  const [themeMode, setThemeMode] = useState("light");
+
+  const toggleTheme = () => {
+    setThemeMode((prevMode) => (prevMode === "light" ? "dark" : "light"));
+  };
+
+  return (
+    <React.StrictMode>
+      <ThemeProvider theme={themeMode === "light" ? lightTheme : darkTheme}>
+        <BrowserRouter basename="/">
+          <DatePickerStyles />
+          <GlobalStyle />
+          <Provider store={store}>
+            <HelmetProvider>
+              <App toggleTheme={toggleTheme} />
+            </HelmetProvider>
+          </Provider>
+        </BrowserRouter>
+      </ThemeProvider>
+    </React.StrictMode>
+  );
+};
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(<Index />);
